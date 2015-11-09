@@ -9,9 +9,11 @@ import pl.hybris.bamboo.enums.MetadataAntTask;
 import pl.hybris.bamboo.pageobjects.JobPage;
 import pl.hybris.bamboo.pageobjects.PlanSidebar;
 import pl.hybris.bamboo.pageobjects.TaskPage;
+import pl.hybris.bamboo.persistence.AntTask;
+import pl.hybris.bamboo.persistence.AntTaskRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 
@@ -26,10 +28,13 @@ public class PlanActions
 	JobPage jobPage;
 	PlanSidebar sidebar;
 
+    private AntTaskRepository repository;
+
 	@Autowired
-	public PlanActions(CustomDriver driver)
+	public PlanActions(CustomDriver driver, AntTaskRepository repository)
 	{
 		this.driver = driver;
+        this.repository = repository;
 	}
 
 	public void navigateToPlanAndSync()
@@ -70,15 +75,15 @@ public class PlanActions
 		jobPage.synchronize();
 
 		List<WebElement> antTasks = jobPage.getAllAntTasks();
-		List<HashMap> master = new ArrayList<>();
 		for (WebElement antTask : antTasks)
 		{
 			TaskPage taskDetails = jobPage.navigateToTheTask(antTask);
 
-			HashMap antTaskMetaData = new HashMap<>();
+
+            Hashtable<String, String> antTaskMetaData = new Hashtable<>();
 			antTaskMetaData.put(MetadataAntTask.HEADER.toString(), taskDetails.getHeader());
 			antTaskMetaData.put(MetadataAntTask.TASK_DESCRIPTION.toString(), taskDetails.getDescription());
-			antTaskMetaData.put(MetadataAntTask.TASK_DISABLED.toString(), taskDetails.getDisableTaskState());
+			antTaskMetaData.put(MetadataAntTask.TASK_DISABLED.toString(), taskDetails.getDisableTaskState().toString());
 			antTaskMetaData.put(MetadataAntTask.EXECUTABLE_VERSION.toString(), taskDetails.getExecutableVersion());
 			antTaskMetaData.put(MetadataAntTask.BUILD_FILE.toString(), taskDetails.getBuildFile());
 			antTaskMetaData.put(MetadataAntTask.TARGET.toString(), taskDetails.getAntTargetAndProperties());
@@ -86,7 +91,7 @@ public class PlanActions
 			antTaskMetaData.put(MetadataAntTask.ENV_VARIABLES.toString(), taskDetails.getEnvironmentVariables());
 			antTaskMetaData.put(MetadataAntTask.WORKING_SUB_DIR.toString(), taskDetails.getWorkingSubDirectory());
 			boolean TaskProduceTestResultsCheckboxState = taskDetails.getTaskProduceTestResultsCheckboxState();
-			antTaskMetaData.put(MetadataAntTask.BUILD_PRODUCE_TEST_RESULTS.toString(), TaskProduceTestResultsCheckboxState);
+			antTaskMetaData.put(MetadataAntTask.BUILD_PRODUCE_TEST_RESULTS.toString(), String.valueOf(TaskProduceTestResultsCheckboxState));
 
 			String taskProducesTestResultsMessage;
 			if (TaskProduceTestResultsCheckboxState)
@@ -99,13 +104,30 @@ public class PlanActions
 			}
 			antTaskMetaData.put(MetadataAntTask.CUSTOM_TEST_RESULTS_DIR.toString(), taskProducesTestResultsMessage);
 
-			//antTaskMetaData.put(MetadataAntTask.SCREENSHOT_FILE_NAME.toString(), taskDetails.takePageScreenshot());
+            String imgName = "initialValue";
+            //imgName = taskDetails.takePageScreenshot();
+			antTaskMetaData.put(MetadataAntTask.SCREENSHOT_FILE_NAME.toString(), imgName);
             antTaskMetaData.put(MetadataAntTask.BUILD_KEY.toString(),getPlanBuildKey());
 
-			master.add(antTaskMetaData);
+			repository.save(new AntTask(
+							antTaskMetaData.get(MetadataAntTask.HEADER.toString()),
+							antTaskMetaData.get(MetadataAntTask.TASK_DESCRIPTION.toString()),
+							antTaskMetaData.get(MetadataAntTask.TASK_DISABLED.toString()),
+							antTaskMetaData.get(MetadataAntTask.EXECUTABLE_VERSION.toString()),
+							antTaskMetaData.get(MetadataAntTask.BUILD_FILE.toString()),
+							antTaskMetaData.get(MetadataAntTask.TARGET.toString()),
+							antTaskMetaData.get(MetadataAntTask.BUILD_SDK.toString()),
+							antTaskMetaData.get(MetadataAntTask.ENV_VARIABLES.toString()),
+							antTaskMetaData.get(MetadataAntTask.WORKING_SUB_DIR.toString()),
+							antTaskMetaData.get(MetadataAntTask.BUILD_PRODUCE_TEST_RESULTS.toString()),
+							antTaskMetaData.get(MetadataAntTask.CUSTOM_TEST_RESULTS_DIR.toString()),
+                            antTaskMetaData.get(MetadataAntTask.SCREENSHOT_FILE_NAME.toString()),
+							antTaskMetaData.get(MetadataAntTask.BUILD_KEY.toString())
+					)
+			);
+
 		}
 
-		master.size();
 	}
 
 	public String getPlanBuildKey()

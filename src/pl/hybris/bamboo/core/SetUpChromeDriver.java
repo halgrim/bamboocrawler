@@ -2,24 +2,15 @@ package pl.hybris.bamboo.core;
 
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
-import pl.hybris.bamboo.util.FileSystemUtil;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by i323728 on 10/29/15.
@@ -36,7 +27,7 @@ public class SetUpChromeDriver implements CustomDriver
 	public SetUpChromeDriver()
 	{
 
-		System.setProperty("webdriver.chrome.driver", "chromedriver");
+/*		System.setProperty("webdriver.chrome.driver", "chromedriver");
 
 		DesiredCapabilities caps = DesiredCapabilities.chrome();
 		ChromeOptions options = new ChromeOptions();
@@ -52,7 +43,7 @@ public class SetUpChromeDriver implements CustomDriver
 		driver.manage().window().setSize(new Dimension(1440, 900));
 		driver.manage().window().setPosition(new Point(0, 0));
 		driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
-		js = (JavascriptExecutor) driver;
+		js = (JavascriptExecutor) driver;*/
 
 //		Much simpler version if you do not want to download images into specific folder
 //		System.setProperty("webdriver.chrome.driver", "chromedriver");
