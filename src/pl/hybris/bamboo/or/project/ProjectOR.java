@@ -9,9 +9,9 @@ import org.openqa.selenium.By;
 public class ProjectOR
 {
     public static final By planListContainer = By.id("dashboard");
-    public static final By lastPlanOnTheList = By.id("viewBuild:DBTPLA2-X5RP");
+
     public static final By singlePlanPane = By.cssSelector(".project > tr");
+    public static final By editPlanButton = By.cssSelector("td:nth-child(6) > a:nth-child(5)");
 
-    public static final By editPlanButton = By.cssSelector(".icon.icon-build-configure");
-
+    public static final By lastPlanOnTheList = By.cssSelector(":nth-child(66)");
 }

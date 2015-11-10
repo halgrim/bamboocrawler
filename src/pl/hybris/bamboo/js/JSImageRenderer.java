@@ -20,19 +20,37 @@ public class JSImageRenderer
         this.path = new FileSystemUtil();
     }
 
-    public String saveWebElementImageToFile(WebElement element) throws IOException
+    public String saveWebElementImageToFile(WebElement element)
     {
         injectLibs();
-        String saveElementToFile = path.readSaveWebElementToFileJS();
+        String saveElementToFile = null;
+        try
+        {
+            saveElementToFile = path.readSaveWebElementToFileJS();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         String imageFileName = path.generateImageFileName();
-        js.executeAsyncScript(saveElementToFile, element, imageFileName );
+        js.executeAsyncScript(saveElementToFile, element, imageFileName);
+
         return imageFileName;
     }
 
-    private void injectLibs() throws IOException
+    private void injectLibs()
     {
-        String loadLibs = path.readLoadLibrariesJS();
+
+        String loadLibs = null;
+        try
+        {
+            loadLibs = path.readLoadLibrariesJS();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
         js.executeAsyncScript(loadLibs);
+        //Object ret = js.executeAsyncScript(loadLibs);
+        //CommonUtil.printMessage("--------- " +ret.toString());
 
     }
 

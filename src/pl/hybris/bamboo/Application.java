@@ -4,10 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
-import pl.hybris.bamboo.persistence.AntTask;
+import pl.hybris.bamboo.pageactions.PlanActions;
+import pl.hybris.bamboo.pageactions.ProjectAction;
 import pl.hybris.bamboo.persistence.AntTaskRepository;
+import pl.hybris.bamboo.persistence.Plan;
+import pl.hybris.bamboo.persistence.PlanRepository;
+
+import java.util.List;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner
@@ -17,7 +21,10 @@ public class Application implements CommandLineRunner
     private CustomDriver driver;
 
     @Autowired
-    private AntTaskRepository repository;
+    private AntTaskRepository antRepository;
+
+    @Autowired
+    private PlanRepository planRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
@@ -27,39 +34,52 @@ public class Application implements CommandLineRunner
     public void run(String... args) throws Exception {
 
 
-        for (AntTask ant : repository.findAll()) {
-            String target = ant.getTarget();
-            System.out.println(target);
-            System.out.println("");
-            if (target == null)
-            {
-                repository.delete(ant);
-            }
+//        for (AntTask ant : antRepository.findAll()) {
+//            String target = ant.getTarget();
+//            System.out.println(target);
+//            System.out.println("");
+//            if (target == null)
+//            {
+//                antRepository.delete(ant);
+//            }
+//
+//        }
 
-        }
+        ProjectAction app = new ProjectAction(driver);
+        PlanActions plan = new PlanActions(driver, antRepository);
 
-
-  /*      ProjectAction app = new ProjectAction(driver);
-        PlanActions plan = new PlanActions(driver, repository);
-
+//        antRepository.deleteAll();
+//        planRepository.deleteAll();
 //        FileSystemUtil util = new FileSystemUtil();
-//        util.dumpAllImgageFiles();
+//        util.dumpAllImageFiles();
 
         try{
+//            app.navigateToBamboo();
+//            List<String> urls = app.playWith();
+//            for(String url : urls)
+//            {
+//                planRepository.save(new Plan(url, "false"));
+//            }
 
-            plan.navigateToPlanAndSync();
-            List<String> jobsUrlForTheGivenPlan = plan.getAllJobs();
-            for (int i = 0 ; i < jobsUrlForTheGivenPlan.size() ; i ++)
-            {
-                plan.getAllAntTasksDetailsFromAJob(jobsUrlForTheGivenPlan.get(i));
+            List<Plan> plansToBeParsed = planRepository.findByParsed("false");
+
+
+            for(Plan planEntity : plansToBeParsed){
+                String planUrl = planEntity.getUrl();
+                plan.navigateToPlanAndSync(planUrl);
+                List<String> jobsUrlForTheGivenPlan = plan.getAllJobs();
+                for (int i = 0 ; i < jobsUrlForTheGivenPlan.size() ; i ++)
+                {
+                    plan.getAllAntTasksDetailsFromAJob(jobsUrlForTheGivenPlan.get(i));
+                }
+                planEntity.setParsed("true");
+                planRepository.save(planEntity);
             }
-
 
         } finally
         {
-            // Might quit earlier than all screenshot saves to disk.
             app.quit();
-        }*/
+        }
 
 
     }

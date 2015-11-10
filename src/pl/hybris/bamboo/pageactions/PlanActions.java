@@ -35,11 +35,13 @@ public class PlanActions
 	{
 		this.driver = driver;
         this.repository = repository;
+
 	}
 
-	public void navigateToPlanAndSync()
+	public void navigateToPlanAndSync(String planLink)
 	{
-		driver.navigate().to("https://bamboo.hybris.com/chain/admin/config/defaultStages.action?buildKey=DBTPLA2-RELEASE");
+		//driver.navigate().to("https://bamboo.hybris.com/chain/admin/config/defaultStages.action?buildKey=DBTPLA2-RELEASE");
+        driver.navigate().to(planLink);
 		sidebar = new PlanSidebar(driver);
 		sidebar.synchronize();
 
@@ -105,7 +107,7 @@ public class PlanActions
 			antTaskMetaData.put(MetadataAntTask.CUSTOM_TEST_RESULTS_DIR.toString(), taskProducesTestResultsMessage);
 
             String imgName = "initialValue";
-            //imgName = taskDetails.takePageScreenshot();
+            imgName = taskDetails.takePageScreenshot();
 			antTaskMetaData.put(MetadataAntTask.SCREENSHOT_FILE_NAME.toString(), imgName);
             antTaskMetaData.put(MetadataAntTask.BUILD_KEY.toString(),getPlanBuildKey());
 

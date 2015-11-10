@@ -8,7 +8,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import pl.hybris.bamboo.core.CustomWebElement;
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
+import pl.hybris.bamboo.core.interfaces.CustomElement;
 import pl.hybris.bamboo.or.plan.TaskDetailsBlockOR;
 import pl.hybris.bamboo.pageobjects.interfaces.BasicPage;
 import pl.hybris.bamboo.util.CommonUtil;
@@ -24,7 +26,7 @@ public class TaskPage implements BasicPage
     private CustomDriver driver;
     private WebDriverWait wait;
 
-    private WebElement pageTag;
+    private CustomElement pageTag;
 
     @Autowired
     public TaskPage(CustomDriver driver)
@@ -40,10 +42,12 @@ public class TaskPage implements BasicPage
         {
             try
             {
-                pageTag = wait.until(ExpectedConditions.elementToBeClickable(TaskDetailsBlockOR.TaskDetailsSection));
+                pageTag = new CustomWebElement(wait.until(ExpectedConditions.elementToBeClickable(TaskDetailsBlockOR.TaskDetailsSection)));
                 pageTag.getText();
+                break;
             } catch (StaleElementReferenceException e)
             {
+                CommonUtil.wait(250);
                 CommonUtil.printMessage("++++++++++ TaskPage.synchronize() StaleElementReferenceException TaskDetailsSection");
             }
         }
@@ -54,8 +58,10 @@ public class TaskPage implements BasicPage
             {
                 Select troublesomeSelect = new Select(wait.until(ExpectedConditions.elementToBeClickable(TaskDetailsBlockOR.Select_ExecutableVersion)));
                 troublesomeSelect.getFirstSelectedOption();
+                break;
             } catch (StaleElementReferenceException e)
             {
+                CommonUtil.wait(250);
                 CommonUtil.printMessage("++++++++++ TaskPage.synchronize() StaleElementReferenceException Select_ExecutableVersion");
             }
         }
@@ -66,8 +72,10 @@ public class TaskPage implements BasicPage
             {
                 Select troublesomeSelect = new Select(wait.until(ExpectedConditions.elementToBeClickable(TaskDetailsBlockOR.Select_BuildJDK)));
                 troublesomeSelect.getFirstSelectedOption();
+                break;
             } catch (StaleElementReferenceException e)
             {
+                CommonUtil.wait(250);
                 CommonUtil.printMessage("++++++++++ TaskPage.synchronize() StaleElementReferenceException Select_BuildJDK");
             }
         }
@@ -82,10 +90,8 @@ public class TaskPage implements BasicPage
     @Override
     public String takePageScreenshot()
     {
-        return CommonUtil.takeScreenshot(pageTag);
-
+        return CommonUtil.takeScreenshot(pageTag.getPureWebElement());
     }
-
 
     public String getHeader()
     {

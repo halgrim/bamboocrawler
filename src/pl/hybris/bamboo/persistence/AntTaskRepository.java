@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface AntTaskRepository extends MongoRepository<AntTask, String>
 {
 
-    AntTask findByHeader(String Header);
+    AntTask findByHeader(String header);
     //List<AntTask> findSomeValue(String someValue);
 
 }

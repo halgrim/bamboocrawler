@@ -1,11 +1,11 @@
 package pl.hybris.bamboo.util;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -31,7 +31,6 @@ public class FileSystemUtil
     private final String LOAD_LIBRARIES = RESOURCES_JS + File.separator+ "JSImageRenderer"+ File.separator+"loadLibs.js";
     private final String SAVE_ELEMENT_TO_FILE = RESOURCES_JS+ File.separator+ "JSImageRenderer"+ File.separator+"saveElementToFile.js";
 
-
     public String readLoadLibrariesJS() throws IOException
     {
         return readFile(LOAD_LIBRARIES);
@@ -53,14 +52,14 @@ public class FileSystemUtil
 
     public boolean checkIfDownloadImageExist(String file)
     {
-        try
+        File newImage = new File(IMAGES_FOLDER + File.separator + file + ".png");
+        if (newImage.length() > 0)
         {
-            new FileInputStream(IMAGES_FOLDER + File.separator+ file + ".png");
-        } catch (FileNotFoundException e)
-        {
+            return true;
+        } else {
             return false;
         }
-        return true;
+
     }
 
     private String readFile(String file) throws IOException
@@ -82,12 +81,42 @@ public class FileSystemUtil
         }
     }
 
-    public void dumpAllImgageFiles() throws IOException
-    {
-        FileUtils.cleanDirectory(new File(IMAGES_FOLDER));
+    public void dumpAllImageFiles() throws IOException {
+
+        File directory = new File(IMAGES_FOLDER);
+        if (!directory.exists()) {
+            String message = directory + " does not exist";
+            throw new IllegalArgumentException(message);
+        }
+
+        if (!directory.isDirectory()) {
+            String message = directory + " is not a directory";
+            throw new IllegalArgumentException(message);
+        }
+
+        File[] files = directory.listFiles();
+        if (files == null) {  // null if security restricted
+            throw new IOException("Failed to list contents of " + directory);
+        }
+
+        files = ArrayUtils.removeElement(files, new File(IMAGES_FOLDER + File.separator+ ".gitignore"));
+
+        IOException exception = null;
+        for (File file : files) {
+            try {
+                FileUtils.forceDelete(file);
+            } catch (IOException ioe) {
+                exception = ioe;
+            }
+        }
+
+        if (null != exception) {
+            throw exception;
+        }
+
     }
 
-    public void waitForFileToDownload(String file) throws IOException
+    public void waitForFileToDownloadUsingWatchService(String file) throws IOException
     {
         final Path path = Paths.get(buildImagesDestinationPath());
 
