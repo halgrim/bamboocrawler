@@ -1,5 +1,6 @@
 package pl.hybris.bamboo.core.interfaces;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 /**
@@ -9,4 +10,6 @@ public interface CustomElement extends WebElement
 {
 
     WebElement getPureWebElement();
+    CustomElement findElement(By by);
+
 }

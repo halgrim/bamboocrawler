@@ -95,7 +95,7 @@ public class TaskPage implements BasicPage
 
     public String getHeader()
     {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Header);
+        CustomElement ele = pageTag.findElement(TaskDetailsBlockOR.Header);
         return ele.getText();
     }
 

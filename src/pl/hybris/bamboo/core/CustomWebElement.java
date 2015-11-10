@@ -83,11 +83,11 @@ public class CustomWebElement implements CustomElement
         return element.findElements(by);
     }
 
-    @Override
-    public WebElement findElement(By by)
-    {
-        return element.findElement(by);
-    }
+//    @Override
+//    public WebElement findElement(By by)
+//    {
+//        return element;
+//    }
 
     @Override
     public boolean isDisplayed()
@@ -123,5 +123,11 @@ public class CustomWebElement implements CustomElement
     public WebElement getPureWebElement()
     {
         return element;
+    }
+
+    @Override
+    public CustomElement findElement(By by)
+    {
+        return new CustomWebElement(element.findElement(by));
     }
 }
