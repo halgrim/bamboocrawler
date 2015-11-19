@@ -3,6 +3,8 @@ package pl.hybris.bamboo.util;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
+
+import pl.hybris.bamboo.core.interfaces.WrapsWebElement;
 import pl.hybris.bamboo.js.JSImageRenderer;
 
 
@@ -22,9 +24,13 @@ public class CommonUtil
 	{
 		String filePath;
 
+
+		WebElement temp = ((WrapsWebElement) element).getWrappedWebElement();
+
+
 		JavascriptExecutor bla = (JavascriptExecutor) ((WrapsDriver) element).getWrappedDriver();
 		JSImageRenderer js = new JSImageRenderer(bla);
-		filePath = js.saveWebElementImageToFile(element);
+		filePath = js.saveWebElementImageToFile(temp);
 		FileSystemUtil path = new FileSystemUtil();
 		for (int i = 0; i < 100; i++)
 		{

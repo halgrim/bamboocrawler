@@ -2,15 +2,11 @@ package pl.hybris.bamboo.pageactions;
 
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.WebElement;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.enums.MetadataAntTask;
 import pl.hybris.bamboo.pageobjects.JobPage;
 import pl.hybris.bamboo.pageobjects.PlanSidebar;
 import pl.hybris.bamboo.pageobjects.TaskPage;
-import pl.hybris.bamboo.persistence.AntTask;
-import pl.hybris.bamboo.persistence.AntTaskRepository;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -20,7 +16,6 @@ import java.util.List;
 /**
  * Created by i323728 on 11/3/15.
  */
-@Component
 public class PlanActions
 {
 	CustomDriver driver;
@@ -28,13 +23,9 @@ public class PlanActions
 	JobPage jobPage;
 	PlanSidebar sidebar;
 
-    private AntTaskRepository repository;
-
-	@Autowired
-	public PlanActions(CustomDriver driver, AntTaskRepository repository)
+	public PlanActions(CustomDriver driver)
 	{
 		this.driver = driver;
-        this.repository = repository;
 
 	}
 
@@ -70,13 +61,14 @@ public class PlanActions
 
 	}
 
-	public void getAllAntTasksDetailsFromAJob(String jobUrl)
+	public List<Hashtable<String, String>> getAllAntTasksDetailsFromAJob(String jobUrl)
 	{
 
 		driver.navigate().to(jobUrl);
 		jobPage.synchronize();
 
 		List<WebElement> antTasks = jobPage.getAllAntTasks();
+		List<Hashtable<String, String>> antResults = new ArrayList<>();
 		for (WebElement antTask : antTasks)
 		{
 			TaskPage taskDetails = jobPage.navigateToTheTask(antTask);
@@ -106,30 +98,13 @@ public class PlanActions
 			}
 			antTaskMetaData.put(MetadataAntTask.CUSTOM_TEST_RESULTS_DIR.toString(), taskProducesTestResultsMessage);
 
-            String imgName = "initialValue";
-            imgName = taskDetails.takePageScreenshot();
+			String imgName = taskDetails.takePageScreenshot();
 			antTaskMetaData.put(MetadataAntTask.SCREENSHOT_FILE_NAME.toString(), imgName);
             antTaskMetaData.put(MetadataAntTask.BUILD_KEY.toString(),getPlanBuildKey());
-
-			repository.save(new AntTask(
-							antTaskMetaData.get(MetadataAntTask.HEADER.toString()),
-							antTaskMetaData.get(MetadataAntTask.TASK_DESCRIPTION.toString()),
-							antTaskMetaData.get(MetadataAntTask.TASK_DISABLED.toString()),
-							antTaskMetaData.get(MetadataAntTask.EXECUTABLE_VERSION.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_FILE.toString()),
-							antTaskMetaData.get(MetadataAntTask.TARGET.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_SDK.toString()),
-							antTaskMetaData.get(MetadataAntTask.ENV_VARIABLES.toString()),
-							antTaskMetaData.get(MetadataAntTask.WORKING_SUB_DIR.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_PRODUCE_TEST_RESULTS.toString()),
-							antTaskMetaData.get(MetadataAntTask.CUSTOM_TEST_RESULTS_DIR.toString()),
-                            antTaskMetaData.get(MetadataAntTask.SCREENSHOT_FILE_NAME.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_KEY.toString())
-					)
-			);
-
+			antResults.add(antTaskMetaData);
 		}
 
+		return antResults;
 	}
 
 	public String getPlanBuildKey()

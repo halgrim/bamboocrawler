@@ -1,16 +1,10 @@
 package pl.hybris.bamboo.pageobjects;
 
-import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import pl.hybris.bamboo.core.CustomWebElement;
-import pl.hybris.bamboo.core.interfaces.CustomDriver;
-import pl.hybris.bamboo.core.interfaces.CustomElement;
+import pl.hybris.bamboo.core.CustomSelect;
 import pl.hybris.bamboo.or.plan.TaskDetailsBlockOR;
 import pl.hybris.bamboo.pageobjects.interfaces.BasicPage;
 import pl.hybris.bamboo.util.CommonUtil;
@@ -19,161 +13,131 @@ import pl.hybris.bamboo.util.CommonUtil;
 /**
  * Created by i323728 on 11/3/15.
  */
-@Component
 public class TaskPage implements BasicPage
 {
 
-    private CustomDriver driver;
-    private WebDriverWait wait;
+	private WebDriver driver;
 
-    private CustomElement pageTag;
+	private WebElement pageTag;
 
-    @Autowired
-    public TaskPage(CustomDriver driver)
-    {
-        this.wait = new WebDriverWait(driver, 3);
-        this.driver = driver;
-    }
+	public TaskPage(WebDriver webDriver)
+	{
+		this.driver = webDriver;
+	}
 
-    @Override
-    public void synchronize()
-    {
-        for(int i = 0; i < 5 ; i++)
+	@Override
+	public void synchronize()
+	{
+
+		pageTag = driver.findElement(TaskDetailsBlockOR.TaskDetailsSection);
+
+	}
+
+	@Override
+	public WebElement getTag()
+	{
+		return pageTag;
+	}
+
+	@Override
+	public String takePageScreenshot()
+	{
+		pageTag.getText();
+        for (int i = 0; i < 5; i++)
         {
             try
             {
-                pageTag = new CustomWebElement(wait.until(ExpectedConditions.elementToBeClickable(TaskDetailsBlockOR.TaskDetailsSection)));
-                pageTag.getText();
-                break;
-            } catch (StaleElementReferenceException e)
+                return CommonUtil.takeScreenshot(pageTag);
+            } catch (TimeoutException e)
             {
-                CommonUtil.wait(250);
-                CommonUtil.printMessage("++++++++++ TaskPage.synchronize() StaleElementReferenceException TaskDetailsSection");
+                CommonUtil.printMessage("++++++++++ TaskPage.takePageScreenshot() " + e.getClass().getSimpleName() + " " + i);
             }
         }
+        CommonUtil.printMessage("++++++++++ Failed to execute TaskPage.takePageScreenshot()");
+        throw new NoSuchElementException("++++++++++ Failed to execute TaskPage.takePageScreenshot()");
+	}
 
-        for(int i = 0; i < 5 ; i++)
-        {
-            try
-            {
-                Select troublesomeSelect = new Select(wait.until(ExpectedConditions.elementToBeClickable(TaskDetailsBlockOR.Select_ExecutableVersion)));
-                troublesomeSelect.getFirstSelectedOption();
-                break;
-            } catch (StaleElementReferenceException e)
-            {
-                CommonUtil.wait(250);
-                CommonUtil.printMessage("++++++++++ TaskPage.synchronize() StaleElementReferenceException Select_ExecutableVersion");
-            }
-        }
+	public String getHeader()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Header);
+		return ele.getText();
+	}
 
-        for(int i = 0; i < 5 ; i++)
-        {
-            try
-            {
-                Select troublesomeSelect = new Select(wait.until(ExpectedConditions.elementToBeClickable(TaskDetailsBlockOR.Select_BuildJDK)));
-                troublesomeSelect.getFirstSelectedOption();
-                break;
-            } catch (StaleElementReferenceException e)
-            {
-                CommonUtil.wait(250);
-                CommonUtil.printMessage("++++++++++ TaskPage.synchronize() StaleElementReferenceException Select_BuildJDK");
-            }
-        }
-    }
+	public String getDescription()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_Description);
+		return ele.getAttribute("value");
+	}
 
-    @Override
-    public WebElement getTag()
-    {
-        return pageTag;
-    }
+	public Boolean getDisableTaskState()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Checkbox_TaskDisabled);
+		String bla = ele.getAttribute("checked");
+		return Boolean.valueOf(bla);
+	}
 
-    @Override
-    public String takePageScreenshot()
-    {
-        return CommonUtil.takeScreenshot(pageTag.getPureWebElement());
-    }
+	public String getExecutableVersion()
+	{
+		CustomSelect ele = new CustomSelect(pageTag.findElement(TaskDetailsBlockOR.Select_ExecutableVersion));
+		return ele.getFirstSelectedOption().getText();
+	}
 
-    public String getHeader()
-    {
-        CustomElement ele = pageTag.findElement(TaskDetailsBlockOR.Header);
-        return ele.getText();
-    }
+	public String getBuildFile()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_BuildFile);
+		return ele.getAttribute("value");
+	}
 
-    public String getDescription()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_Description);
-        return ele.getAttribute("value");
-    }
+	public String getTarget()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_Description);
+		return ele.getAttribute("value");
+	}
 
-    public Boolean getDisableTaskState()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Checkbox_TaskDisabled);
-        String bla = ele.getAttribute("checked");
-        return Boolean.valueOf(bla);
-    }
+	public String getAntTargetAndProperties()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_AntTargetAndProperties);
+		return ele.getAttribute("value");
+	}
 
-    public String getExecutableVersion()
-    {
-        Select ele = new Select(pageTag.findElement(TaskDetailsBlockOR.Select_ExecutableVersion));
-        return ele.getFirstSelectedOption().getText();
-    }
+	public String getBuildJDK()
+	{
+		CustomSelect ele = new CustomSelect(pageTag.findElement(TaskDetailsBlockOR.Select_BuildJDK));
+		return ele.getFirstSelectedOption().getText();
+	}
 
-    public String getBuildFile()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_BuildFile);
-        return ele.getAttribute("value");
-    }
+	public String getEnvironmentVariables()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_EnvironmentVariables);
+		return ele.getAttribute("value");
+	}
 
-    public String getTarget()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_Description);
-        return ele.getAttribute("value");
-    }
+	public String getWorkingSubDirectory()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_WorkingSubDirectory);
+		return ele.getAttribute("value");
+	}
 
-    public String getAntTargetAndProperties()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_AntTargetAndProperties);
-        return ele.getAttribute("value");
-    }
+	public Boolean getTaskProduceTestResultsCheckboxState()
+	{
+		WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Checkbox_TaskProduceTestResults);
+		String bla = ele.getAttribute("checked");
+		return Boolean.valueOf(bla);
+	}
 
-    public String getBuildJDK()
-    {
-        Select ele = new Select(pageTag.findElement(TaskDetailsBlockOR.Select_BuildJDK));
-        return ele.getFirstSelectedOption().getText();
-    }
+	public String getSpecifyCustomTestResultsDirectoryValue()
+	{
 
-    public String getEnvironmentVariables()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_EnvironmentVariables);
-        return ele.getAttribute("value");
-    }
+		// Builder pattern ...
+		if (getTaskProduceTestResultsCheckboxState())
+		{
+			WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_SpecifyCustomTestResultsDirectory);
+			return ele.getText();
+		}
 
-    public String getWorkingSubDirectory()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_WorkingSubDirectory);
-        return ele.getAttribute("value");
-    }
+		return "Checkbox 'The build will produce test results' is not selected! Skipping the execution of the 'getSpecifyCustomTestResultsDirectoryValue'";
 
-    public Boolean getTaskProduceTestResultsCheckboxState()
-    {
-        WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Checkbox_TaskProduceTestResults);
-        String bla = ele.getAttribute("checked");
-        return Boolean.valueOf(bla);
-    }
-
-    public String getSpecifyCustomTestResultsDirectoryValue()
-    {
-
-        // Builder pattern ...
-        if (getTaskProduceTestResultsCheckboxState())
-        {
-            WebElement ele = pageTag.findElement(TaskDetailsBlockOR.Input_SpecifyCustomTestResultsDirectory);
-            return ele.getText();
-        }
-
-        return "Checkbox 'The build will produce test results' is not selected! Skipping the execution of the 'getSpecifyCustomTestResultsDirectoryValue'";
-
-    }
+	}
 
 }
 

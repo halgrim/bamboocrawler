@@ -10,7 +10,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.springframework.context.annotation.Scope;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.util.FileSystemUtil;
@@ -26,12 +28,15 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Component
-@Scope("singleton")
-public class SetUpChromeDriver implements CustomDriver
+//@Scope("singleton")
+//This scopes the bean definition to a single instance per Spring IoC container (default).
+public class SetUpChromeDriver implements CustomDriver, DisposableBean
 {
 
-	private WebDriver driver;
-	private JavascriptExecutor js;
+	private final WebDriver driver;
+	private final JavascriptExecutor js;
+	private final WebDriverWait wait;
+
 
 	public SetUpChromeDriver()
 	{
@@ -53,6 +58,7 @@ public class SetUpChromeDriver implements CustomDriver
 		driver.manage().window().setPosition(new Point(0, 0));
 		driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
 		js = (JavascriptExecutor) driver;
+		wait = new WebDriverWait(driver, 5);
 
 //		Much simpler version if you do not want to download images into specific folder
 //		System.setProperty("webdriver.chrome.driver", "chromedriver");
@@ -73,6 +79,10 @@ public class SetUpChromeDriver implements CustomDriver
 
 	public JavascriptExecutor getJSInjector() {return js;}
 
+	public void destroy() {
+		driver.quit();
+	}
+
 	@Override
 	public void get(String s)
 	{
@@ -91,16 +101,25 @@ public class SetUpChromeDriver implements CustomDriver
 		return driver.getTitle();
 	}
 
-	@Override
-	public List<WebElement> findElements(By by)
-	{
-		return driver.findElements(by);
-	}
 
 	@Override
 	public WebElement findElement(By by)
 	{
-		return driver.findElement(by);
+		return new CustomWebElement(wait.until(ExpectedConditions.elementToBeClickable(by)), by);
+	}
+
+	@Override
+	public List<WebElement> findElements(By by)
+	{
+		//you will get in a lot of trouble if you use By class to on WebElement from the list of WebElements returned from findElements(by);
+//		List<WebElement> tempList = new ArrayList<>();
+//		List<WebElement> tempWebElementList = driver.findElements(by);
+//		for (WebElement ele : tempWebElementList)
+//		{
+//			tempList.add(new CustomWebElement(ele, by));
+//		}
+//		return tempList;
+		return driver.findElements(by);
 	}
 
 	@Override

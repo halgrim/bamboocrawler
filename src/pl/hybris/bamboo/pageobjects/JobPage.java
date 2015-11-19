@@ -3,8 +3,6 @@ package pl.hybris.bamboo.pageobjects;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.or.plan.StageBlockOR;
 import pl.hybris.bamboo.pageobjects.interfaces.BasicPage;
@@ -15,7 +13,6 @@ import java.util.List;
 /**
  * Created by i323728 on 11/6/15.
  */
-@Component
 public class JobPage implements BasicPage
 {
     private CustomDriver driver;
@@ -23,7 +20,6 @@ public class JobPage implements BasicPage
 
     private WebElement pageTag;
 
-    @Autowired
     public JobPage(CustomDriver driver)
     {
         this.wait = new WebDriverWait(driver, 3);

@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+//import org.openqa.selenium.Point;
+
 
 /**
  * Created by i323728 on 10/29/15.
@@ -51,7 +53,7 @@ public class PrintWebElementImage
 
 				ImageIO.write(eleScreenshot, "png", screenshot);
 				//Copy the element screenshot to disk
-				FileUtils.copyFile(screenshot, new File("images/" + idOne + ".png"));
+				FileUtils.copyFile(screenshot, new File("images2/" + idOne + ".png"));
 			}
 			catch (IOException e)
 			{

@@ -3,7 +3,7 @@
  */
 
 var callback = arguments[arguments.length - 1];
-//Wathc out for script arguments object scope!
+//Watch out for script arguments object scope!
 var webElement = arguments[0];
 var filePath = arguments[1];
 
