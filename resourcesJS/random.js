@@ -51,3 +51,18 @@ html2canvas(document.body, {
     }
 })(arguments[0], arguments[arguments.length - 1]);
 
+
+var blabla = document.querySelector('body > div.gui-container.hide-comments.hiderulers > div.gui-bottom-container > div.viewport-container > div.viewport-scrollable.inspectlet-sensitive > canvas:nth-child(1)');
+html2canvas(blabla, {
+    onrendered: function (canvas) {
+        canvas.toBlob(function (blob) {
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            a.href = window.URL.createObjectURL(blob);
+            a.download = 'canvas';
+            a.click();
+            document.body.removeChild(a);
+        });
+    }
+});

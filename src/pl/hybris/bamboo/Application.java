@@ -8,6 +8,9 @@ import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.enums.MetadataAntTask;
 import pl.hybris.bamboo.pageactions.PlanActions;
 import pl.hybris.bamboo.pageactions.ProjectAction;
+import pl.hybris.bamboo.pageobjects.JobTaskList;
+import pl.hybris.bamboo.pageobjects.PlanSidebar;
+import pl.hybris.bamboo.pageobjects.TaskConfiguration;
 import pl.hybris.bamboo.persistence.AntTask;
 import pl.hybris.bamboo.persistence.AntTaskRepository;
 import pl.hybris.bamboo.persistence.Plan;
@@ -22,15 +25,15 @@ import java.util.List;
 public class Application implements CommandLineRunner
 {
 
-//	To enable the @Autowired, you have to register an ‘AutowiredAnnotationBeanPostProcessor’. You can register it in two ways.
-//	To enable @Autowired, I believe there are two ways to do it in the xml file:
-//	But how do you do it if you're not using XML, and Spring 3.0 doesn't have the handy @AnnotationDrivenConfig?
-//
-//	Nevermind.
-//
-//	Simply using the AnnotationConfigApplicationContext class in the @Configuration class is sufficient. I couldn't seem to get it to work with a constructor, but no problem with a setter method.
-//	org.springframework.context.annotation.AnnotationConfigApplicationContext;
-//	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SimpleConfig.class);
+	//	To enable the @Autowired, you have to register an ‘AutowiredAnnotationBeanPostProcessor’. You can register it in two ways.
+	//	To enable @Autowired, I believe there are two ways to do it in the xml file:
+	//	But how do you do it if you're not using XML, and Spring 3.0 doesn't have the handy @AnnotationDrivenConfig?
+	//
+	//	Nevermind.
+	//
+	//	Simply using the AnnotationConfigApplicationContext class in the @Configuration class is sufficient. I couldn't seem to get it to work with a constructor, but no problem with a setter method.
+	//	org.springframework.context.annotation.AnnotationConfigApplicationContext;
+	//	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SimpleConfig.class);
 
 	@Autowired
 	private CustomDriver driver;
@@ -41,60 +44,76 @@ public class Application implements CommandLineRunner
 	@Autowired
 	private PlanRepository planRepository;
 
-	public static void main(String[] args)
+	public static void main(final String[] args)
 	{
 		SpringApplication.run(Application.class, args);
 	}
 
 	@Override
-	public void run(String... args) throws Exception
+	public void run(final String... args) throws Exception
 	{
 
-		PlanActions plan = new PlanActions(driver);
+		driver.navigate().to("https://bamboo.hybris.com/build/admin/edit/editBuildTasks.action?buildKey=DBTPLA2-RELEASE-ICPERST");
 
-		antRepository.deleteAll();
-		planRepository.deleteAll();
-		FileSystemUtil util = new FileSystemUtil();
-		util.dumpAllImageFiles();
+		final PlanSidebar sidebar = new PlanSidebar(driver);
+		sidebar.synchronize();
 
-		ProjectAction app = new ProjectAction(driver);
-		app.navigateToBamboo();
-		List<String> urls = app.getAllPlanConfigurationLinks();
-		for (String url : urls)
+		final JobTaskList jobTaskList = new JobTaskList(driver);
+		jobTaskList.synchronize();
+
+		final TaskConfiguration taskP = new TaskConfiguration(driver);
+		taskP.synchronize();
+		taskP.takePageScreenshot();
+
+		if (false)
 		{
-			planRepository.save(new Plan(url, "false"));
-		}
+			final PlanActions plan = new PlanActions(driver);
 
-		List<Plan> plansToBeParsed = planRepository.findByParsed("false");
+			antRepository.deleteAll();
+			planRepository.deleteAll();
+			final FileSystemUtil util = new FileSystemUtil();
+			util.dumpAllImageFiles();
 
-		for (Plan planEntity : plansToBeParsed)
-		{
-			String planUrl = planEntity.getUrl();
-			plan.navigateToPlanAndSync(planUrl);
-			List<String> jobsUrlForTheGivenPlan = plan.getAllJobs();
-			for (int i = 0; i < jobsUrlForTheGivenPlan.size(); i++)
+			final ProjectAction app = new ProjectAction(driver);
+			app.navigateToBamboo();
+			final List<String> urls = app.getAllPlanConfigurationLinks();
+			for (final String url : urls)
 			{
-				List<Hashtable<String, String>> antTaskResults = plan.getAllAntTasksDetailsFromAJob(jobsUrlForTheGivenPlan.get(i));
-
-				for (Hashtable<String, String> antTaskMetaData : antTaskResults)
-				{
-					antRepository.save(new AntTask(antTaskMetaData.get(MetadataAntTask.HEADER.toString()),
-							antTaskMetaData.get(MetadataAntTask.TASK_DESCRIPTION.toString()),
-							antTaskMetaData.get(MetadataAntTask.TASK_DISABLED.toString()),
-							antTaskMetaData.get(MetadataAntTask.EXECUTABLE_VERSION.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_FILE.toString()),
-							antTaskMetaData.get(MetadataAntTask.TARGET.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_SDK.toString()),
-							antTaskMetaData.get(MetadataAntTask.ENV_VARIABLES.toString()),
-							antTaskMetaData.get(MetadataAntTask.WORKING_SUB_DIR.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_PRODUCE_TEST_RESULTS.toString()),
-							antTaskMetaData.get(MetadataAntTask.CUSTOM_TEST_RESULTS_DIR.toString()),
-							antTaskMetaData.get(MetadataAntTask.SCREENSHOT_FILE_NAME.toString()),
-							antTaskMetaData.get(MetadataAntTask.BUILD_KEY.toString())));
-				}
+				planRepository.save(new Plan(url, "false"));
 			}
-			planEntity.setParsed("true");
-			planRepository.save(planEntity);
+
+			final List<Plan> plansToBeParsed = planRepository.findByParsed("false");
+
+			for (final Plan planEntity : plansToBeParsed)
+			{
+				final String planUrl = planEntity.getUrl();
+				plan.navigateToPlanAndSync(planUrl);
+				final List<String> jobsUrlForTheGivenPlan = plan.getAllJobs();
+				for (int i = 0; i < jobsUrlForTheGivenPlan.size(); i++)
+				{
+					final List<Hashtable<String, String>> antTaskResults = plan
+							.getAllAntTasksDetailsFromAJob(jobsUrlForTheGivenPlan.get(i));
+
+					for (final Hashtable<String, String> antTaskMetaData : antTaskResults)
+					{
+						antRepository.save(new AntTask(antTaskMetaData.get(MetadataAntTask.HEADER.toString()),
+								antTaskMetaData.get(MetadataAntTask.TASK_DESCRIPTION.toString()),
+								antTaskMetaData.get(MetadataAntTask.TASK_DISABLED.toString()),
+								antTaskMetaData.get(MetadataAntTask.EXECUTABLE_VERSION.toString()),
+								antTaskMetaData.get(MetadataAntTask.BUILD_FILE.toString()),
+								antTaskMetaData.get(MetadataAntTask.TARGET.toString()),
+								antTaskMetaData.get(MetadataAntTask.BUILD_SDK.toString()),
+								antTaskMetaData.get(MetadataAntTask.ENV_VARIABLES.toString()),
+								antTaskMetaData.get(MetadataAntTask.WORKING_SUB_DIR.toString()),
+								antTaskMetaData.get(MetadataAntTask.BUILD_PRODUCE_TEST_RESULTS.toString()),
+								antTaskMetaData.get(MetadataAntTask.CUSTOM_TEST_RESULTS_DIR.toString()),
+								antTaskMetaData.get(MetadataAntTask.SCREENSHOT_FILE_NAME.toString()),
+								antTaskMetaData.get(MetadataAntTask.BUILD_KEY.toString())));
+					}
+				}
+				planEntity.setParsed("true");
+				planRepository.save(planEntity);
+			}
 		}
 	}
 }

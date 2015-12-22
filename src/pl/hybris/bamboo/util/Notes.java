@@ -11,5 +11,10 @@ public class Notes
     js.executeAsyncScript(jQueryLoader <comment>, http://localhost:8080/jquery-1.7.2.js <comment/>);
     var callback = arguments[arguments.length - 1];
     callback('loaded');
+
+
+    driver.execute_script('window.open("about:blank")')
+    driver.switch_to_window(driver.window_handles[0])
+
     */
 }

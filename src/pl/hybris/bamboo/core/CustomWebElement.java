@@ -10,7 +10,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import pl.hybris.bamboo.core.interfaces.WrapsWebElement;
 import pl.hybris.bamboo.util.CommonUtil;
 
@@ -24,7 +23,6 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 {
     private final WebDriver driver;
 	private final By by;
-    private final WebDriverWait wait;
 	private WebElement element;
 
 
@@ -33,7 +31,6 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
         this.driver = ((WrapsDriver) webElement).getWrappedDriver();
 		this.by = findBy;
         this.element = webElement;
-        this.wait = new WebDriverWait(driver, 5);
 	}
 
 	@Override
@@ -127,7 +124,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 			catch (StaleElementReferenceException e)
 			{
 				CommonUtil.wait(500);
-				CommonUtil.printMessage("++++++++++ CustomWebElement.getText() StaleElementReferenceException "+i);
+				CommonUtil.printMessage("++++++++++ CustomWebElement.getText() StaleElementReferenceException " + i);
                 element = driver.findElement(by);
 			}
 		}
@@ -138,6 +135,23 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	@Override
 	public WebElement findElement(By byLocator)
 	{
+//    Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+//            .withTimeout( 30, TimeUnit.SECONDS )
+//            .pollingEvery( 5, TimeUnit.SECONDS )
+//            .ignoring( NoSuchElementException.class, StaleElementReferenceException.class );
+//    // using a customized expected condition
+//    WebElement foo1 = wait.until(new Function<WebDriver, WebElement>() {
+//        public WebElement apply(WebDriver driver) {
+//            return driver.findElement(By.id("foo1"));
+//        }
+//    });
+//    // using a built-in expected condition
+//    WebElement foo2 = wait.until( ExpectedConditions
+//            .presenceOfElementLocated( By.id("foo2") ) );
+//    // careful with this next one. it requires visibility attribute on html tag
+//    WebElement foo3 = wait.until( ExpectedConditions
+//            .visibilityOfElementLocated( By.id("foo3") ) );
+
         for (int i = 0; i < 10; i++)
         {
             try
@@ -147,7 +161,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
             catch (NoSuchElementException e)
             {
                 CommonUtil.wait(500);
-                CommonUtil.printMessage("++++++++++ CustomWebElement.findElement(By "+ byLocator .toString() +") IllegalStateException "+i);
+                CommonUtil.printMessage("++++++++++ CustomWebElement.findElement(By "+ byLocator.toString() +") IllegalStateException " + i);
             }
         }
         CommonUtil.printMessage("++++++++++ Failed to execute CustomWebElement.findElement()");
@@ -211,20 +225,5 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 		return element;
 	}
 
-//    Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
-//            .withTimeout( 30, TimeUnit.SECONDS )
-//            .pollingEvery( 5, TimeUnit.SECONDS )
-//            .ignoring( NoSuchElementException.class, StaleElementReferenceException.class );
-//    // using a customized expected condition
-//    WebElement foo1 = wait.until(new Function<WebDriver, WebElement>() {
-//        public WebElement apply(WebDriver driver) {
-//            return driver.findElement(By.id("foo1"));
-//        }
-//    });
-//    // using a built-in expected condition
-//    WebElement foo2 = wait.until( ExpectedConditions
-//            .presenceOfElementLocated( By.id("foo2") ) );
-//    // careful with this next one. it requires visibility attribute on html tag
-//    WebElement foo3 = wait.until( ExpectedConditions
-//            .visibilityOfElementLocated( By.id("foo3") ) );
+
 }

@@ -14,24 +14,22 @@ import pl.hybris.bamboo.js.JSImageRenderer;
 public class CommonUtil
 {
 
-	public static void printMessage(String massage)
+	public static void printMessage(final String massage)
 	{
 		System.out.println(massage);
 	}
 
 
-	public static String takeScreenshot(WebElement element)
+	public static String takeScreenshot(final WebElement element)
 	{
-		String filePath;
+		final String filePath;
 
+		final WebElement temp = ((WrapsWebElement) element).getWrappedWebElement();
 
-		WebElement temp = ((WrapsWebElement) element).getWrappedWebElement();
-
-
-		JavascriptExecutor bla = (JavascriptExecutor) ((WrapsDriver) element).getWrappedDriver();
-		JSImageRenderer js = new JSImageRenderer(bla);
+		final JavascriptExecutor bla = (JavascriptExecutor) ((WrapsDriver) element).getWrappedDriver();
+		final JSImageRenderer js = new JSImageRenderer(bla);
 		filePath = js.saveWebElementImageToFile(temp);
-		FileSystemUtil path = new FileSystemUtil();
+		final FileSystemUtil path = new FileSystemUtil();
 		for (int i = 0; i < 100; i++)
 		{
 			if (path.checkIfDownloadImageExist(filePath))
@@ -42,7 +40,7 @@ public class CommonUtil
 			{
 				Thread.sleep(250);
 			}
-			catch (InterruptedException e)
+			catch (final InterruptedException e)
 			{
 				break;
 			}
@@ -52,13 +50,13 @@ public class CommonUtil
 
 	}
 
-	public static void wait(int millis)
+	public static void wait(final int millis)
 	{
 		try
 		{
 			Thread.sleep(millis);
 		}
-		catch (InterruptedException e)
+		catch (final InterruptedException e)
 		{
 			e.printStackTrace();
 		}

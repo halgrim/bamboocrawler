@@ -1,9 +1,8 @@
 package pl.hybris.bamboo.pageobjects;
 
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.or.project.ProjectOR;
 import pl.hybris.bamboo.pageobjects.interfaces.BasicPage;
 import pl.hybris.bamboo.util.CommonUtil;
@@ -17,15 +16,13 @@ import java.util.List;
  */
 public class ProjectPage implements BasicPage
 {
-	CustomDriver driver;
-	WebDriverWait wait;
+	WebDriver driver;
 
 	WebElement pageTag;
 	List<WebElement> planTitles;
 
-	public ProjectPage(CustomDriver driver)
+	public ProjectPage(final WebDriver driver)
 	{
-		this.wait = new WebDriverWait(driver, 3);
 		this.driver = driver;
 	}
 
@@ -34,21 +31,9 @@ public class ProjectPage implements BasicPage
 	{
 
 		pageTag = driver.findElement(ProjectOR.planListContainer);
-
-		for (int i = 0; i < 5; i++)
-		{
-			try
-			{
-				WebElement lastPlan = pageTag.findElement(ProjectOR.lastPlanOnTheList);
-				lastPlan.findElement(ProjectOR.editPlanButton);
-				break;
-			}
-			catch (NoSuchElementException e)
-			{
-				CommonUtil.wait(250);
-				CommonUtil.printMessage("++++++++++ ProjectPage.synchronize() NoSuchElementException lastPlanOnTheList");
-			}
-		}
+		pageTag.getText();
+		final WebElement lastPlan = pageTag.findElement(ProjectOR.lastPlanOnTheList);
+		lastPlan.findElement(ProjectOR.editPlanButton);
 
 	}
 
@@ -69,7 +54,7 @@ public class ProjectPage implements BasicPage
 	{
 		if (planTitles == null)
 		{
-			planTitles = driver.findElements(ProjectOR.singlePlanPane);
+			planTitles = pageTag.findElements(ProjectOR.singlePlanPane);
 		}
 
 		if (planTitles.isEmpty())
@@ -83,14 +68,14 @@ public class ProjectPage implements BasicPage
 
 	public List<String> getPlanConfigurationLinks()
 	{
-		List<String> planConfigurationLinks = new ArrayList<>();
-		int planTilesSize = planTitles.size();
+		final List<String> planConfigurationLinks = new ArrayList<>();
+		final int planTilesSize = planTitles.size();
 		String link;
 		String message = "";
 		for (int i = 0; i < planTilesSize; i++)
 		{
-			WebElement temp = planTitles.get(i);
-			WebElement editPlan;
+			final WebElement temp = planTitles.get(i);
+			final WebElement editPlan;
 
 			try
 			{
@@ -101,7 +86,7 @@ public class ProjectPage implements BasicPage
 					planConfigurationLinks.add(link);
 				}
 			}
-			catch (NoSuchElementException e)
+			catch (final NoSuchElementException e)
 			{
 				message = message + " Probably permission to edit plan is not set, image file of the plan pane: "
 						+ CommonUtil.takeScreenshot(temp);

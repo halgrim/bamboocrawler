@@ -1,10 +1,8 @@
 package pl.hybris.bamboo.pageobjects;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.or.plan.PlanSidebarOR;
 import pl.hybris.bamboo.pageobjects.interfaces.BasicPage;
 import pl.hybris.bamboo.util.CommonUtil;
@@ -17,33 +15,32 @@ import java.util.List;
 
 public class PlanSidebar implements BasicPage
 {
-    CustomDriver driver;
-    WebDriverWait wait;
+    WebDriver driver;
 
-    WebElement tagContainer;
+    WebElement pageTag;
 
-    public PlanSidebar(CustomDriver driver)
+    public PlanSidebar(final WebDriver driver)
     {
-        this.wait = new WebDriverWait(driver, 3);
         this.driver = driver;
     }
 
     @Override
     public void synchronize()
     {
-        tagContainer = wait.until(ExpectedConditions.elementToBeClickable(PlanSidebarOR.Section_ConfigSidebar));
+        pageTag = driver.findElement(PlanSidebarOR.Section_ConfigSidebar);
+        pageTag.getText();
     }
 
     @Override
     public WebElement getTag()
     {
-        return tagContainer;
+        return pageTag;
     }
 
     @Override
     public String takePageScreenshot()
     {
-        return CommonUtil.takeScreenshot(tagContainer);
+        return CommonUtil.takeScreenshot(pageTag);
     }
 
     public List<WebElement> getStages()
@@ -58,9 +55,9 @@ public class PlanSidebar implements BasicPage
         return getElements(PlanSidebarOR.JobElement);
     }
 
-    private List<WebElement> getElements(By by)
+    private List<WebElement> getElements(final By by)
     {
-        return tagContainer.findElements(by);
+        return pageTag.findElements(by);
     }
 
 }

@@ -4,17 +4,17 @@ package pl.hybris.bamboo.core;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
+import pl.hybris.bamboo.util.CommonUtil;
 import pl.hybris.bamboo.util.FileSystemUtil;
 
 import java.util.HashMap;
@@ -35,18 +35,16 @@ public class SetUpChromeDriver implements CustomDriver, DisposableBean
 
 	private final WebDriver driver;
 	private final JavascriptExecutor js;
-	private final WebDriverWait wait;
-
 
 	public SetUpChromeDriver()
 	{
 
 		System.setProperty("webdriver.chrome.driver", "chromedriver");
 
-		DesiredCapabilities caps = DesiredCapabilities.chrome();
-		ChromeOptions options = new ChromeOptions();
-		Map<String, Object> prefs = new HashMap<String, Object>();
-		FileSystemUtil pathU = new FileSystemUtil();
+		final DesiredCapabilities caps = DesiredCapabilities.chrome();
+		final ChromeOptions options = new ChromeOptions();
+		final Map<String, Object> prefs = new HashMap<String, Object>();
+		final FileSystemUtil pathU = new FileSystemUtil();
 		prefs.put("download.default_directory", pathU.buildImagesDestinationPath());
 
 		options.setExperimentalOption("prefs", prefs);
@@ -58,7 +56,6 @@ public class SetUpChromeDriver implements CustomDriver, DisposableBean
 		driver.manage().window().setPosition(new Point(0, 0));
 		driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
 		js = (JavascriptExecutor) driver;
-		wait = new WebDriverWait(driver, 5);
 
 //		Much simpler version if you do not want to download images into specific folder
 //		System.setProperty("webdriver.chrome.driver", "chromedriver");
@@ -84,7 +81,7 @@ public class SetUpChromeDriver implements CustomDriver, DisposableBean
 	}
 
 	@Override
-	public void get(String s)
+	public void get(final String s)
 	{
 		driver.get(s);
 	}
@@ -103,22 +100,27 @@ public class SetUpChromeDriver implements CustomDriver, DisposableBean
 
 
 	@Override
-	public WebElement findElement(By by)
+	public WebElement findElement(final By byLocator)
 	{
-		return new CustomWebElement(wait.until(ExpectedConditions.elementToBeClickable(by)), by);
+		for (int i = 0; i < 10; i++)
+		{
+			try
+			{
+				return new CustomWebElement(driver.findElement(byLocator), byLocator);
+			}
+			catch (final IllegalStateException | NoSuchElementException e)
+			{
+				CommonUtil.wait(500);
+				CommonUtil.printMessage("++++++++++ SetUpChromeDriver.findElement(By " + byLocator.toString() + ") Exception " + i);
+			}
+		}
+		CommonUtil.printMessage("++++++++++ Failed to execute SetUpChromeDriver.findElement()");
+		throw new NoSuchElementException("++++++++++ Failed to execute SetUpChromeDriver.findElement()");
 	}
 
 	@Override
-	public List<WebElement> findElements(By by)
+	public List<WebElement> findElements(final By by)
 	{
-		//you will get in a lot of trouble if you use By class to on WebElement from the list of WebElements returned from findElements(by);
-//		List<WebElement> tempList = new ArrayList<>();
-//		List<WebElement> tempWebElementList = driver.findElements(by);
-//		for (WebElement ele : tempWebElementList)
-//		{
-//			tempList.add(new CustomWebElement(ele, by));
-//		}
-//		return tempList;
 		return driver.findElements(by);
 	}
 

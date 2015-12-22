@@ -12,9 +12,9 @@ import java.util.List;
 public class ProjectAction
 {
 
-    CustomDriver driver;
+    private final CustomDriver driver;
 
-    public ProjectAction(CustomDriver driver){
+    public ProjectAction(final CustomDriver driver){
         this.driver = driver;
     }
 
@@ -28,7 +28,7 @@ public class ProjectAction
 
     public List<String> getAllPlanConfigurationLinks()
     {
-        ProjectPage projectPage = new ProjectPage(driver);
+        final ProjectPage projectPage = new ProjectPage(driver);
         projectPage.synchronize();
         projectPage.getPlanPaneList();
         return projectPage.getPlanConfigurationLinks();

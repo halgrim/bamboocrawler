@@ -1,9 +1,7 @@
 package pl.hybris.bamboo.pageobjects;
 
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.or.plan.StageBlockOR;
 import pl.hybris.bamboo.pageobjects.interfaces.BasicPage;
 import pl.hybris.bamboo.util.CommonUtil;
@@ -13,25 +11,23 @@ import java.util.List;
 /**
  * Created by i323728 on 11/6/15.
  */
-public class JobPage implements BasicPage
+public class JobTaskList implements BasicPage
 {
-    private CustomDriver driver;
-    private WebDriverWait wait;
+    private final WebDriver driver;
 
     private WebElement pageTag;
 
-    public JobPage(CustomDriver driver)
+    public JobTaskList(final WebDriver driver)
     {
-        this.wait = new WebDriverWait(driver, 3);
-        this.driver = driver;
+       this.driver = driver;
     }
 
     @Override
     public void synchronize()
     {
-        pageTag = wait.until(ExpectedConditions.elementToBeClickable(StageBlockOR.TaskListSection));
-        wait.until(ExpectedConditions.elementToBeClickable(StageBlockOR.FinalTaskElement));
-
+        pageTag = driver.findElement(StageBlockOR.TaskListSection);
+        pageTag.getText();
+        driver.findElement(StageBlockOR.FinalTaskElement).getText();
     }
 
     @Override
@@ -49,14 +45,14 @@ public class JobPage implements BasicPage
 
     public List<WebElement> getAllAntTasks()
     {
-        List<WebElement> bla = pageTag.findElements(StageBlockOR.AntTaskItem);
+        final List<WebElement> bla = pageTag.findElements(StageBlockOR.AntTaskItem);
         return bla;
     }
 
-    public TaskPage navigateToTheTask(WebElement taskPane)
+    public TaskConfiguration navigateToTheTask(final WebElement taskPane)
     {
         taskPane.click();
-        TaskPage taskDetails = new TaskPage(driver);
+        final TaskConfiguration taskDetails = new TaskConfiguration(driver);
         taskDetails.synchronize();
         return taskDetails;
     }

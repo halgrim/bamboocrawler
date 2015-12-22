@@ -7,7 +7,7 @@ var callback = arguments[arguments.length - 1];
 var webElement = arguments[0];
 var filePath = arguments[1];
 
-//wait until tml2canvas is loaded
+//wait until html2canvas is loaded
 var checkExist = setInterval(function () {
     if (typeof html2canvas !== 'undefined') {
         console.log("loaded!");
@@ -37,5 +37,7 @@ var checkExist = setInterval(function () {
     }
 
 }, 500);
+
+
 
 

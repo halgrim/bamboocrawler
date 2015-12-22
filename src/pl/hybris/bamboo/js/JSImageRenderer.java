@@ -12,26 +12,26 @@ import java.io.IOException;
 public class JSImageRenderer
 {
 
-    private JavascriptExecutor js;
-    private FileSystemUtil path;
+    private final JavascriptExecutor js;
+    private final FileSystemUtil path;
 
-    public JSImageRenderer(JavascriptExecutor jsExecutor){
+    public JSImageRenderer(final JavascriptExecutor jsExecutor){
         this.js = jsExecutor;
         this.path = new FileSystemUtil();
     }
 
-    public String saveWebElementImageToFile(WebElement element)
+    public String saveWebElementImageToFile(final WebElement element)
     {
         injectLibs();
         String saveElementToFile = null;
         try
         {
             saveElementToFile = path.readSaveWebElementToFileJS();
-        } catch (IOException e)
+        } catch (final IOException e)
         {
             e.printStackTrace();
         }
-        String imageFileName = path.generateImageFileName();
+        final String imageFileName = path.generateImageFileName();
         js.executeAsyncScript(saveElementToFile, element, imageFileName);
 
         return imageFileName;
@@ -44,7 +44,7 @@ public class JSImageRenderer
         try
         {
             loadLibs = path.readLoadLibrariesJS();
-        } catch (IOException e)
+        } catch (final IOException e)
         {
             e.printStackTrace();
         }
