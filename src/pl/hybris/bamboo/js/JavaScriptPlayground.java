@@ -11,6 +11,7 @@ import org.openqa.selenium.internal.WrapsDriver;
 public class JavaScriptPlayground
 {
 
+
 	public static void elementHighlight(WebElement element)
 	{
 		for (int i = 0; i < 2; i++)
