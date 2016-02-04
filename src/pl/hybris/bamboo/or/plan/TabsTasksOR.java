@@ -5,12 +5,24 @@ import org.openqa.selenium.By;
 /**
  * Created by i323728 on 11/3/15.
  */
-public class TaskDetailsBlockOR
+public class TabsTasksOR
 {
     public static final String blockImage ="";
 
-    public static final By TaskDetailsSection = By.cssSelector("#panel-editor-config");
+    //
+    //Common
+    //
 
+    public static final By TaskEditorSection = By.cssSelector("#panel-editor-setup");
+    public static final By Button_SaveTask = By.cssSelector("#updateTask_save");
+    public static final By SingleTaskItem = By.cssSelector(".item");
+    public static final By AntTaskItem    = By.xpath(".//li[a/h3[contains(.,'Ant')]]");
+    public static final By SourceCodeCheckoutItem = By.xpath(".//li[a/h3[contains(.,'Source Code Checkout')]]");
+    public static final By FinalTaskElement = By.cssSelector(".final-tasks-bar");
+
+    //
+    //Ant
+    //
     public static final By Header = By.cssSelector(".task-heading > h2");
     public static final By Input_Description = By.cssSelector("#updateTask_userDescription");
     public static final By Checkbox_TaskDisabled = By.cssSelector("#updateTask_taskDisabled"); //if checked has attribute checked="checked"
@@ -58,6 +70,18 @@ public class TaskDetailsBlockOR
     // Select_BuildJDK
     // Checkbox_TaskProduceTestResults
     public static final By Checkbox_SpecifyCustomTestResultsDirectory= By.cssSelector("#testDirectoryOptioncustomTestDirectory"); //if checked has attribute checked="checked"
+
     // Input_SpecifyCustomTestResultsDirectory
+
+
+    //
+    //Source Code Checkout
+    //
+
+    public static By Dropdown_Repository = By.cssSelector("#selectedRepository_0");
+
+
+
+
 
 }

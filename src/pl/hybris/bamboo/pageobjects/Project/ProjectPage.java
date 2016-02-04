@@ -1,4 +1,4 @@
-package pl.hybris.bamboo.pageobjects;
+package pl.hybris.bamboo.pageobjects.project;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;

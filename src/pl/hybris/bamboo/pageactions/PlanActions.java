@@ -4,9 +4,8 @@ import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.WebElement;
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
 import pl.hybris.bamboo.enums.MetadataAntTask;
-import pl.hybris.bamboo.pageobjects.JobTaskList;
 import pl.hybris.bamboo.pageobjects.PlanSidebar;
-import pl.hybris.bamboo.pageobjects.TaskConfiguration;
+import pl.hybris.bamboo.pageobjects.TaskConfigurationTab;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -20,7 +19,7 @@ public class PlanActions
 {
 	private final CustomDriver driver;
 
-	private JobTaskList jobTaskList;
+	private TaskConfigurationTab taskConfigurationTab;
 	private PlanSidebar sidebar;
 
 	public PlanActions(final CustomDriver driver)
@@ -36,7 +35,7 @@ public class PlanActions
 		sidebar = new PlanSidebar(driver);
 		sidebar.synchronize();
 
-		jobTaskList = new JobTaskList(driver);
+		taskConfigurationTab = new TaskConfigurationTab(driver);
 	}
 
 	public List<String> getAllJobs()
@@ -65,13 +64,13 @@ public class PlanActions
 	{
 
 		driver.navigate().to(jobUrl);
-		jobTaskList.synchronize();
+		taskConfigurationTab.synchronize();
 
-		final List<WebElement> antTasks = jobTaskList.getAllAntTasks();
+		final List<WebElement> antTasks = taskConfigurationTab.getAllAntTasks();
 		final List<Hashtable<String, String>> antResults = new ArrayList<>();
 		for (final WebElement antTask : antTasks)
 		{
-			final TaskConfiguration taskDetails = jobTaskList.navigateToTheTask(antTask);
+			final TaskConfigurationTab taskDetails = taskConfigurationTab.navigateToTheTask(antTask);
 
 
             final Hashtable<String, String> antTaskMetaData = new Hashtable<>();

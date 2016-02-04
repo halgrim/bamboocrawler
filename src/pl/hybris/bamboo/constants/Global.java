@@ -6,4 +6,5 @@ package pl.hybris.bamboo.constants;
 public class Global
 {
     public static String BAMBOO_URL = "https://bamboo.hybris.com";
+
 }

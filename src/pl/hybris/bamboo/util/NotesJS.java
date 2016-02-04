@@ -3,7 +3,7 @@ package pl.hybris.bamboo.util;
 /**
  * Created by i323728 on 11/2/15.
  */
-public class Notes
+public class NotesJS
 {
     /*
     ((WrapsDriver) projectPane).getWrappedDriver()
@@ -16,5 +16,8 @@ public class Notes
     driver.execute_script('window.open("about:blank")')
     driver.switch_to_window(driver.window_handles[0])
 
+
+    executor.executeScript("arguments[0].click();", ((WrapsWebElement) bla).getWrappedWebElement());
+    executor.executeScript("arguments[0].setAttribute('value', '"+text+"' )", ((WrapsWebElement) bla).getWrappedWebElement());
     */
 }

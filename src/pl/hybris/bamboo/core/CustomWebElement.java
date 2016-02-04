@@ -26,7 +26,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	private WebElement element;
 
 
-	public CustomWebElement(WebElement webElement, By findBy)
+	public CustomWebElement(final WebElement webElement, final By findBy)
 	{
         this.driver = ((WrapsDriver) webElement).getWrappedDriver();
 		this.by = findBy;
@@ -46,9 +46,9 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	}
 
 	@Override
-	public void sendKeys(CharSequence... keysToSend)
+	public void sendKeys(final CharSequence... keysToSend)
 	{
-		element.sendKeys();
+		element.sendKeys(keysToSend);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 			{
 				return element.getTagName();
 			}
-			catch (StaleElementReferenceException e)
+			catch (final StaleElementReferenceException e)
 			{
 				CommonUtil.wait(500);
 				CommonUtil.printMessage("++++++++++ CustomWebElement.getTagName() StaleElementReferenceException " + i);
@@ -79,7 +79,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	}
 
 	@Override
-	public String getAttribute(String name)
+	public String getAttribute(final String name)
 	{
 		for (int i = 0; i < 10; i++)
 		{
@@ -87,7 +87,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 			{
 				return element.getAttribute(name);
 			}
-			catch (StaleElementReferenceException e)
+			catch (final StaleElementReferenceException e)
 			{
 				CommonUtil.wait(500);
 				CommonUtil.printMessage("++++++++++ CustomWebElement.getAttribute() StaleElementReferenceException " + i);
@@ -115,13 +115,13 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	@Override
 	public String getText()
 	{
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 50; i++)
 		{
 			try
 			{
 				return element.getText();
 			}
-			catch (StaleElementReferenceException e)
+			catch (final StaleElementReferenceException e)
 			{
 				CommonUtil.wait(500);
 				CommonUtil.printMessage("++++++++++ CustomWebElement.getText() StaleElementReferenceException " + i);
@@ -133,7 +133,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	}
 
 	@Override
-	public WebElement findElement(By byLocator)
+	public WebElement findElement(final By byLocator)
 	{
 //    Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
 //            .withTimeout( 30, TimeUnit.SECONDS )
@@ -152,13 +152,13 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 //    WebElement foo3 = wait.until( ExpectedConditions
 //            .visibilityOfElementLocated( By.id("foo3") ) );
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 50; i++)
         {
             try
             {
                 return new CustomWebElement(element.findElement(byLocator), byLocator);
             }
-            catch (NoSuchElementException e)
+            catch (final NoSuchElementException e)
             {
                 CommonUtil.wait(500);
                 CommonUtil.printMessage("++++++++++ CustomWebElement.findElement(By "+ byLocator.toString() +") IllegalStateException " + i);
@@ -170,7 +170,7 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	}
 
 	@Override
-	public List<WebElement> findElements(By by)
+	public List<WebElement> findElements(final By by)
 	{
         //you will get in a lot of trouble if you use By class to on WebElement from the list of WebElements returned from findElements(by);
 //		List<WebElement> tempList = new ArrayList<>();
@@ -202,13 +202,13 @@ public class CustomWebElement implements WebElement, WrapsDriver, WrapsWebElemen
 	}
 
 	@Override
-	public String getCssValue(String propertyName)
+	public String getCssValue(final String propertyName)
 	{
 		return element.getCssValue(propertyName);
 	}
 
 	@Override
-	public <X> X getScreenshotAs(OutputType<X> target) throws WebDriverException
+	public <X> X getScreenshotAs(final OutputType<X> target) throws WebDriverException
 	{
 		return element.getScreenshotAs(target);
 	}

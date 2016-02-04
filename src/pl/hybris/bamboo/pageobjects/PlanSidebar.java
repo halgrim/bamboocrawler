@@ -1,6 +1,7 @@
 package pl.hybris.bamboo.pageobjects;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import pl.hybris.bamboo.or.plan.PlanSidebarOR;
@@ -29,6 +30,8 @@ public class PlanSidebar implements BasicPage
     {
         pageTag = driver.findElement(PlanSidebarOR.Section_ConfigSidebar);
         pageTag.getText();
+
+        CommonUtil.highlight(pageTag);
     }
 
     @Override
@@ -60,5 +63,24 @@ public class PlanSidebar implements BasicPage
         return pageTag.findElements(by);
     }
 
+    public PlanSidebar selectJobByName(final String jobName)
+    {
+        final List<WebElement> jobs = getJobs();
+        for(final WebElement ele : jobs)
+        {
+            if(ele.getText().contains(jobName))
+            {
+                ele.click();
+                return this;
+            }
+        }
+        throw new NoSuchElementException("++++++++++ Failed to execute PlanSidebar.selectJobByName() with value " + jobName);
+    }
+
+    public PlanSidebar navigateToPlanConfiguration()
+    {
+        pageTag.findElement(PlanSidebarOR.ElementPlanConfiguration).click();
+        return this;
+    }
 }
 

@@ -16,7 +16,7 @@ public class CustomSelect
 	private WebElement webElement;
 	private WebElement currentlySelectedOption;
 
-	public CustomSelect(WebElement element)
+	public CustomSelect(final WebElement element)
 	{
 		this.selectElement = new Select(element);
 		this.webElement = element;
@@ -34,7 +34,7 @@ public class CustomSelect
 		{
 			try
 			{
-				for (WebElement option : selectElement.getOptions())
+				for (final WebElement option : selectElement.getOptions())
 				{
 					if (option.isSelected())
 					{
@@ -79,4 +79,26 @@ public class CustomSelect
 		throw new NoSuchElementException("++++++++++ Failed to execute CustomSelect.getText() element was null");
 
 	}
+
+	public CustomSelect selectByVisibleText(final String text)
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			try
+			{
+				selectElement.selectByVisibleText(text);
+				return this;
+
+			}
+			catch (StaleElementReferenceException | IllegalStateException e)
+			{
+				CommonUtil.wait(500);
+				CommonUtil.printMessage("++++++++++ CustomSelect.selectByVisibleText() " + e.getClass().getSimpleName() +" "+ i);
+				selectElement = new Select(webElement);
+			}
+		}
+		CommonUtil.printMessage("++++++++++ Failed to execute CustomSelect.selectByVisibleText()");
+		throw new NoSuchElementException("++++++++++ Failed to execute CustomSelect.selectByVisibleText() with text: " + text);
+	}
+
 }

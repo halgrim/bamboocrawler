@@ -1,9 +1,9 @@
-package pl.hybris.bamboo.or;
+package pl.hybris.bamboo.util;
 
 /**
  * Created by i323728 on 11/6/15.
  */
-public class PlaygroundNotes
+public class NotesPlayground
 {
     /*
     Be carefull when using xPath to find class

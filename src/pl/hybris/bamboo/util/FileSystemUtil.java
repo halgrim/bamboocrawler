@@ -41,18 +41,18 @@ public class FileSystemUtil
     }
 
     public String generateImageFileName(){
-        UUID idOne = UUID.randomUUID();
+        final UUID idOne = UUID.randomUUID();
         return idOne.toString();
     }
 
     public String buildImagesDestinationPath(){
-        String workingDir = System.getProperty("user.dir");
+        final String workingDir = System.getProperty("user.dir");
         return workingDir+ File.separator+ IMAGES_FOLDER;
     }
 
-    public boolean checkIfDownloadImageExist(String file)
+    public boolean checkIfDownloadImageExist(final String file)
     {
-        File newImage = new File(IMAGES_FOLDER + File.separator + file + ".png");
+        final File newImage = new File(IMAGES_FOLDER + File.separator + file + ".png");
         if (newImage.length() > 0)
         {
             return true;
@@ -62,14 +62,14 @@ public class FileSystemUtil
 
     }
 
-    private String readFile(String file) throws IOException
+    private String readFile(final String file) throws IOException
     {
-        Charset cs = Charset.forName("UTF-8");
-        FileInputStream stream = new FileInputStream(file);
+        final Charset cs = Charset.forName("UTF-8");
+        final FileInputStream stream = new FileInputStream(file);
         try {
-            Reader reader = new BufferedReader(new InputStreamReader(stream, cs));
-            StringBuilder builder = new StringBuilder();
-            char[] buffer = new char[8192];
+            final Reader reader = new BufferedReader(new InputStreamReader(stream, cs));
+            final StringBuilder builder = new StringBuilder();
+            final char[] buffer = new char[8192];
             int read;
             while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
                 builder.append(buffer, 0, read);
@@ -83,14 +83,14 @@ public class FileSystemUtil
 
     public void dumpAllImageFiles() throws IOException {
 
-        File directory = new File(IMAGES_FOLDER);
+        final File directory = new File(IMAGES_FOLDER);
         if (!directory.exists()) {
-            String message = directory + " does not exist";
+            final String message = directory + " does not exist";
             throw new IllegalArgumentException(message);
         }
 
         if (!directory.isDirectory()) {
-            String message = directory + " is not a directory";
+            final String message = directory + " is not a directory";
             throw new IllegalArgumentException(message);
         }
 
@@ -102,10 +102,10 @@ public class FileSystemUtil
         files = ArrayUtils.removeElement(files, new File(IMAGES_FOLDER + File.separator+ ".gitignore"));
 
         IOException exception = null;
-        for (File file : files) {
+        for (final File file : files) {
             try {
                 FileUtils.forceDelete(file);
-            } catch (IOException ioe) {
+            } catch (final IOException ioe) {
                 exception = ioe;
             }
         }
@@ -116,7 +116,7 @@ public class FileSystemUtil
 
     }
 
-    public void waitForFileToDownloadUsingWatchService(String file) throws IOException
+    public void waitForFileToDownloadUsingWatchService(final String file) throws IOException
     {
         final Path path = Paths.get(buildImagesDestinationPath());
 
@@ -132,7 +132,7 @@ public class FileSystemUtil
                 {
                     throw new IOException("Timeout when waiting for a file download after 10 second. FIle: " + file);
                 }
-                for (WatchEvent<?> watchEvent : key.pollEvents())
+                for (final WatchEvent<?> watchEvent : key.pollEvents())
                 {
                     final Path newFile = (Path) watchEvent.context();
                     if (newFile.endsWith(newFile + ".png"))
@@ -140,7 +140,7 @@ public class FileSystemUtil
                         CommonUtil.printMessage("New file: " + newFile + ".png");
                     }
                 }
-            }   catch (InterruptedException e)
+            }   catch (final InterruptedException e)
             {
                 throw new IOException("Timeout when waiting for a file download after 10 second. FIle: " + file);
             }

@@ -1,7 +1,7 @@
 package pl.hybris.bamboo.pageactions;
 
 import pl.hybris.bamboo.core.interfaces.CustomDriver;
-import pl.hybris.bamboo.pageobjects.ProjectPage;
+import pl.hybris.bamboo.pageobjects.project.ProjectPage;
 
 import java.util.List;
 

@@ -9,6 +9,9 @@ public class PlanSidebarOR
 {
     public static final By Section_ConfigSidebar = By.cssSelector("#config-sidebar");
 
+    public static final By ElementPlanConfiguration = By.cssSelector("h2 > a");
+
     public static final By StageElement = By.cssSelector("ol > li");
     public static final By JobElement = By.cssSelector("ol > li > ul > li > a");
+
 }

@@ -6,6 +6,7 @@ import org.openqa.selenium.internal.WrapsDriver;
 
 import pl.hybris.bamboo.core.interfaces.WrapsWebElement;
 import pl.hybris.bamboo.js.JSImageRenderer;
+import pl.hybris.bamboo.js.JavaScriptPlayground;
 
 
 /**
@@ -60,5 +61,10 @@ public class CommonUtil
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public static void highlight(WebElement pageTag)
+	{
+		JavaScriptPlayground.elementHighlight(((WrapsWebElement) pageTag).getWrappedWebElement());
 	}
 }
